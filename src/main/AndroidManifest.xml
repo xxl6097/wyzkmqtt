@@ -1,0 +1,34 @@
+<manifest
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.fsix.mqtt">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <application>
+        <!--<service
+            android:name=".biz.FsixMQTTService"
+            android:exported="true" />-->
+        <service
+            android:name="org.eclipse.paho.android.service.MqttService"
+            android:exported="true" />
+        <service
+            android:name="com.fsix.mqtt.core.service.FsixMQTTService"
+            android:enabled="true"
+            android:exported="true"
+            android:persistent="true"
+            android:process=":mqttcore">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.FsixMQTTService" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>
