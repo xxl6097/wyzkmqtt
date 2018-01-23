@@ -70,7 +70,7 @@ public class MqttConnManager {
                 Logc.d("========>subscribe "+topic);
                 int qas = connBean.getQos();
                 if (!TextUtils.isEmpty(topic)) {
-                    client.subscribe(topic, qas);
+                    //client.subscribe(topic, qas);
                 }
             }
 
