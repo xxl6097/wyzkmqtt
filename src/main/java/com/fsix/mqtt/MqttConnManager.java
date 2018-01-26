@@ -148,6 +148,7 @@ public class MqttConnManager {
         this.connBean = processMqtt(bean);
         this.mContext = mContext;
         this.onMqttConnectListener = listener;
+        
         init();
     }
 
