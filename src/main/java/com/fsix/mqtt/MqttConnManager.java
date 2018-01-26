@@ -3,7 +3,6 @@ package com.fsix.mqtt;
 import android.content.Context;
 import android.text.TextUtils;
 
-
 import com.fsix.mqtt.bean.MqttConnBean;
 import com.fsix.mqtt.core.callback.FSixMqttCallback;
 import com.fsix.mqtt.util.Logc;
@@ -67,11 +66,25 @@ public class MqttConnManager {
             // 订阅myTopic话题
             if (connBean != null) {
                 String topic = connBean.getTopic();
-                Logc.d("========>subscribe "+topic);
+                Logc.d("========>subscribe " + topic);
                 int qas = connBean.getQos();
                 if (!TextUtils.isEmpty(topic)) {
                     client.subscribe(topic, qas);
                 }
+            }
+
+
+        } catch (MqttException e) {
+            Logc.e(TAG, e.toString());
+        }
+    }
+
+    public void subscribe(String topic, int qos) {
+        try {
+            // 订阅myTopic话题
+            Logc.d("========>subscribe " + topic);
+            if (!TextUtils.isEmpty(topic)) {
+                client.subscribe(topic, qos);
             }
 
 
@@ -120,6 +133,14 @@ public class MqttConnManager {
     public void start(Context mContext, MqttConnBean bean) {
         this.connBean = processMqtt(bean);
         this.mContext = mContext;
+        init();
+    }
+
+    public void start(Context mContext, MqttConnBean bean, IMqttActionListener listener) {
+        this.connBean = processMqtt(bean);
+        this.mContext = mContext;
+        this.onMqttConnectListener = listener;
+        
         init();
     }
 
@@ -207,23 +228,27 @@ public class MqttConnManager {
 
     }
 
-    public void reConnect(){
+    public void reConnect() {
         doClientConnection();
     }
 
+
+    private IMqttActionListener onMqttConnectListener;
     // MQTT是否连接成功
     private IMqttActionListener iMqttActionListener = new IMqttActionListener() {
 
         @Override
         public void onSuccess(IMqttToken arg0) {
-            Logc.d("========>mq.onSuccess "+arg0.toString());
+            Logc.d("========>mq.onSuccess " + arg0.toString());
             if (client != null && client.isConnected()) {
                 if (!isConnectFlag) {
                     isConnectFlag = true;
                 }
                 //subscribe();
             }
-
+            if (onMqttConnectListener != null) {
+                onMqttConnectListener.onSuccess(arg0);
+            }
         }
 
         @Override
@@ -231,6 +256,10 @@ public class MqttConnManager {
             Logc.e(TAG, "=======>连接失败 " + arg1.getMessage());
             if (isConnectFlag) {
                 isConnectFlag = false;
+            }
+
+            if (onMqttConnectListener != null) {
+                onMqttConnectListener.onFailure(arg0, arg1);
             }
         }
     };
