@@ -107,11 +107,15 @@ public class MqttConnManager {
     }
 
     public void publish(byte[] data) {
+        publish(connBean.getTopic(), data);
+    }
+
+    public void publish(String topic, byte[] data) {
         if (isConnectFlag()) {
             MqttMessage mqttMessage = new MqttMessage();
             try {
                 mqttMessage.setPayload(data);
-                client.publish(connBean.getTopic(), mqttMessage);
+                client.publish(topic, mqttMessage);
             } catch (MqttException e) {
                 e.printStackTrace();
             }
@@ -119,11 +123,15 @@ public class MqttConnManager {
     }
 
     public void publish(byte[] data, IMqttActionListener actionListener) {
+        publish(connBean.getTopic(), data, actionListener);
+    }
+
+    public void publish(String topic, byte[] data, IMqttActionListener actionListener) {
         if (isConnectFlag()) {
             MqttMessage mqttMessage = new MqttMessage();
             try {
                 mqttMessage.setPayload(data);
-                client.publish(connBean.getTopic(), mqttMessage, null, actionListener);
+                client.publish(topic, mqttMessage, null, actionListener);
             } catch (MqttException e) {
                 e.printStackTrace();
             }
@@ -140,7 +148,6 @@ public class MqttConnManager {
         this.connBean = processMqtt(bean);
         this.mContext = mContext;
         this.onMqttConnectListener = listener;
-        
         init();
     }
 
