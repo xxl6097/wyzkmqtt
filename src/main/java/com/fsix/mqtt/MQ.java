@@ -15,41 +15,17 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-
-/**
- * ————————————————————————————————
- * Copyright (C) 2014-2017, by het, Shenzhen, All rights reserved.
- * ————————————————————————————————
- * <p>MqttConnManage
- * <p>描述：</p>
- * 名称:  <br>
- * 作者: uuxia<br>
- * 版本: 1.0<br>
- * 日期: 2017/5/11 20:09<br>
- **/
-public class MqttConnManager {
-
-    public static final String TAG = "NETWORK_TAG";//MqttConnManager.class.getSimpleName();
+public class MQ {
+    public static final String TAG = "NETWORK_TAG";//MQ.class.getSimpleName();
     private MqttAndroidClient client = null;
     private MqttConnectOptions conOpt;
     private MqttConnBean connBean;
     public volatile boolean isConnectFlag = false; //是否连接
     private boolean cancleConnectFlag = false; //断开连接标志
     private Context mContext;
-    private static MqttConnManager instances = null;
+    private static MQ instances = null;
     private static final String SERVICE_NAME = "org.eclipse.paho.android.service.MqttService";
     private IMqttActionListener mqttActionListener;
-
-
-    public static MqttConnManager getInstances() {
-        if (instances == null) {
-            synchronized (MqttConnManager.class) {
-                instances = new MqttConnManager();
-            }
-        }
-        return instances;
-    }
-
 
     /**
      * 订阅主题
