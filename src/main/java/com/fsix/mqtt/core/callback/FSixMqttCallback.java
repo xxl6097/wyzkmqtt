@@ -44,7 +44,7 @@ public class FSixMqttCallback implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         if (message != null) {
-            dealMessage(message.toString());
+            dealMessage(topic, message);
         }
 
     }
@@ -59,10 +59,9 @@ public class FSixMqttCallback implements MqttCallback {
      *
      * @param message
      */
-    private void dealMessage(String message) {
-        String msgData = message.toString();
-        if (!TextUtils.isEmpty(msgData)) {
-            EventManager.getInstance().post(new MQBean(MQConst.ConnStatus.CONNECTED, message));
+    private void dealMessage(String topic, MqttMessage message) {
+        if (!TextUtils.isEmpty(topic) && message != null) {
+            EventManager.getInstance().post(new MQBean(MQConst.ConnStatus.CONNECTED, topic, message));
         }
         Logc.d(TAG, "NETWORK_TAG.FSixMqttCallback:messageArrived:" + message);
     }
