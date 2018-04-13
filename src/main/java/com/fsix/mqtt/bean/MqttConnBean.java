@@ -21,11 +21,11 @@ public class MqttConnBean implements Serializable {
     //密码:MD5(userId+appSecret)
     private String password;
     //协议版本号，4标识MQTT3.1.1版本:4
-    private Integer protocolVersion;
+    private Integer protocolVersion = 4;
     //客户端断开不保持要推送的消息:1
-    private Integer cleanSession;
+    private Integer cleanSession=1;
     //心跳检测时间间隔:必须大于30秒
-    private Long keepAlive;
+    private Long keepAlive = 30l;
     //MQTT服务器不保持消息
     private Integer retain;
     //消息QOS Level设置为1，至少一次

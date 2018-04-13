@@ -165,7 +165,8 @@ public class MQ {
                 // 设置超时时间，单位：秒
                 conOpt.setConnectionTimeout(10);
                 // 心跳包发送间隔，单位：秒
-                conOpt.setKeepAliveInterval(20);
+                int keepalive = connBean.getKeepAlive().intValue();
+                conOpt.setKeepAliveInterval(keepalive);
                 // 用户名
                 conOpt.setUserName(connBean.getUserName());
                 // 密码
@@ -272,11 +273,11 @@ public class MQ {
             mqttConnBeanData.setClientId(clientId);
             mqttConnBeanData.setPassword(mqttConnBean.getPassword());
             mqttConnBeanData.setUserName(mqttConnBean.getUserName());
-            mqttConnBeanData.setProtocolVersion(4);
-            mqttConnBeanData.setKeepAlive((long) 30);
-            mqttConnBeanData.setRetain(0);
-            mqttConnBeanData.setQos(1);
-            mqttConnBeanData.setCleanSession(1);
+            mqttConnBeanData.setProtocolVersion(mqttConnBean.getProtocolVersion());
+            mqttConnBeanData.setKeepAlive(mqttConnBean.getKeepAlive());
+            mqttConnBeanData.setRetain(mqttConnBean.getRetain());
+            mqttConnBeanData.setQos(mqttConnBean.getQos());
+            mqttConnBeanData.setCleanSession(mqttConnBean.getCleanSession());
             //设置主题
             mqttConnBeanData.setTopic(mqttConnBean.getTopic());
             //设置请求地址
