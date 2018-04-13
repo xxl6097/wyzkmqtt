@@ -171,25 +171,26 @@ public class MQ {
                 // 密码
                 conOpt.setPassword(connBean.getPassword().toCharArray());
                 // last will message
-//                boolean doConnect = true;
-//                String message = "{\"terminal_uid\":\"" + connBean.getClientId() + "\"}";
-//                String topic = connBean.getTopic();
-//                Integer qos = connBean.getQos();
-//                Boolean retained = connBean.getRetain() == null ? false : true;
-//                if ((!message.equals("")) || (!topic.equals(""))) {
-//                    // 最后的遗嘱
-//                    try {
-//                        conOpt.setWill(topic, message.getBytes(), qos.intValue(), retained.booleanValue());
-//                    } catch (Exception e) {
-//                        Logc.e(TAG,e.toString());
-//                        doConnect = false;
-//                        iMqttActionListener.onFailure(null, e);
-//                    }
-//                }
-//                if (doConnect) {
-//                    doClientConnection();
-//                }
-                doClientConnection();
+
+                boolean doConnect = true;
+                String message = "{\"terminal_uid\":\"" + connBean.getClientId() + "\"}";
+                String topic = connBean.getTopic();
+                Integer qos = connBean.getQos();
+                Boolean retained = connBean.getRetain() == null ? false : true;
+                if ((!message.equals("")) || (!topic.equals(""))) {
+                    // 最后的遗嘱
+                    try {
+                        conOpt.setWill(topic, message.getBytes(), qos.intValue(), retained.booleanValue());
+                    } catch (Exception e) {
+                        Logc.e(TAG,e.toString());
+                        doConnect = false;
+                        iMqttActionListener.onFailure(null, e);
+                    }
+                }
+                if (doConnect) {
+                    doClientConnection();
+                }
+//                doClientConnection();
             }
 
         }
@@ -197,6 +198,22 @@ public class MQ {
 
     }
 
+
+    /*boolean doConnect = true;
+    String message1 = "{\"terminal_uid\":\"" + clientId + "\"}";
+    String topic = clientId + "/client";//connOpts.getTopic();
+    Integer qos = 0;//connOpts.getQos();
+    Boolean retained = true;//connBean.getRetain() == null ? false : true;
+            if ((!message1.equals("")) || (!topic.equals(""))) {
+        try {
+            connOpts.setWill(topic, message1.getBytes(), qos.intValue(), retained.booleanValue());
+        } catch (Exception e) {
+            doConnect = false;
+        }
+    }
+            if (doConnect) {
+        sampleClient.connect(connOpts);
+    }*/
 
     /**
      * 连接MQTT服务器

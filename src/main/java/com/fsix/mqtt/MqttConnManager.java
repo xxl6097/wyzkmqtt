@@ -194,6 +194,7 @@ public class MqttConnManager {
                 conOpt.setUserName(connBean.getUserName());
                 // 密码
                 conOpt.setPassword(connBean.getPassword().toCharArray());
+
                 // last will message
 //                boolean doConnect = true;
 //                String message = "{\"terminal_uid\":\"" + connBean.getClientId() + "\"}";
