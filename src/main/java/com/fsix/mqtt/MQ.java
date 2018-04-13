@@ -1,6 +1,8 @@
 package com.fsix.mqtt;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.fsix.mqtt.bean.MqttConnBean;
@@ -10,7 +12,9 @@ import com.fsix.mqtt.util.NetworkUtil;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -20,6 +24,7 @@ public class MQ {
     private MqttAndroidClient client = null;
     private MqttConnectOptions conOpt;
     private MqttConnBean connBean;
+    private FSixMqttCallback mqttCallback;
     public volatile boolean isConnectFlag = false; //是否连接
     private boolean cancleConnectFlag = false; //断开连接标志
     private Context mContext;
@@ -158,8 +163,30 @@ public class MQ {
             if (client == null) {
                 client = new MqttAndroidClient(mContext, uri, connBean.getClientId());
                 //client.registerResources(mContext);
+                mqttCallback = new FSixMqttCallback(connBean.getTopic());
                 // 设置MQTT监听并且接受消息
-                client.setCallback(new FSixMqttCallback(connBean.getTopic()));
+                client.setCallback(new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable cause) {
+                        mqttCallback.connectionLost(cause);
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                reConnect();
+                            }
+                        }, 5000);
+                    }
+
+                    @Override
+                    public void messageArrived(String topic, MqttMessage message) throws Exception {
+                        mqttCallback.messageArrived(topic, message);
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken token) {
+                        mqttCallback.deliveryComplete(token);
+                    }
+                });
                 conOpt = new MqttConnectOptions();
                 // 清除缓存
                 conOpt.setCleanSession(true);
@@ -221,12 +248,12 @@ public class MQ {
      * 连接MQTT服务器
      */
     private void doClientConnection() {
-        Logc.i("####mqtt doClientConnection " +client.isConnected());
+        Logc.i("####mqtt doClientConnection " + client.isConnected());
         if (!client.isConnected() && NetworkUtil.isConnected(mContext)) {
             try {
                 client.connect(conOpt, null, iMqttActionListener);
             } catch (MqttException e) {
-                Logc.e(TAG, "######mqtt "+e.toString());
+                Logc.e(TAG, "######mqtt " + e.toString());
             }
         }
 
@@ -265,6 +292,13 @@ public class MQ {
             if (onMqttConnectListener != null) {
                 onMqttConnectListener.onFailure(arg0, arg1);
             }
+
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    reConnect();
+                }
+            }, 5000);
         }
     };
 
