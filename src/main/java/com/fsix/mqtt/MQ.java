@@ -134,6 +134,7 @@ public class MQ {
                 //注销mqtt相关资源
                 try {
                     client.disconnect();
+                    client.close();
                     client = null;
                     Logc.d(TAG, "mqtt server close");
                 } catch (MqttException e) {
@@ -173,7 +174,7 @@ public class MQ {
                 conOpt.setPassword(connBean.getPassword().toCharArray());
                 // last will message
 
-                boolean doConnect = true;
+                /*boolean doConnect = true;
                 String message = "{\"terminal_uid\":\"" + connBean.getClientId() + "\"}";
                 String topic = connBean.getTopic();
                 Integer qos = connBean.getQos();
@@ -190,8 +191,8 @@ public class MQ {
                 }
                 if (doConnect) {
                     doClientConnection();
-                }
-//                doClientConnection();
+                }*/
+                doClientConnection();
             }
 
         }
@@ -220,11 +221,12 @@ public class MQ {
      * 连接MQTT服务器
      */
     private void doClientConnection() {
+        Logc.i("####mqtt doClientConnection " +client.isConnected());
         if (!client.isConnected() && NetworkUtil.isConnected(mContext)) {
             try {
                 client.connect(conOpt, null, iMqttActionListener);
             } catch (MqttException e) {
-                Logc.e(TAG, e.toString());
+                Logc.e(TAG, "######mqtt "+e.toString());
             }
         }
 
