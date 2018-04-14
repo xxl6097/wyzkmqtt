@@ -140,7 +140,7 @@ public class MQ {
                 try {
                     client.disconnect();
 //                    client.close();
-                    client = null;
+//                    client = null;
                     Logc.d(TAG, "mqtt server close");
                 } catch (MqttException e) {
                     Logc.d(TAG, e.toString());
@@ -248,6 +248,8 @@ public class MQ {
      * 连接MQTT服务器
      */
     private void doClientConnection() {
+        if (client == null)
+            return;
         Logc.i("####mqtt doClientConnection " + client.isConnected());
         if (!client.isConnected() && NetworkUtil.isConnected(mContext)) {
             try {
