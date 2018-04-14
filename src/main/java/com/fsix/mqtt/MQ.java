@@ -139,7 +139,7 @@ public class MQ {
                 //注销mqtt相关资源
                 try {
                     client.disconnect();
-                    client.close();
+//                    client.close();
                     client = null;
                     Logc.d(TAG, "mqtt server close");
                 } catch (MqttException e) {
