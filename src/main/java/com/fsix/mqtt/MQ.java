@@ -22,6 +22,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class MQ {
     public static final String TAG = "NETWORK_TAG";//MQ.class.getSimpleName();
     private MqttAndroidClient client = null;
+    private boolean isRelease = false;
     private MqttConnectOptions conOpt;
     private MqttConnBean connBean;
     private FSixMqttCallback mqttCallback;
@@ -141,6 +142,7 @@ public class MQ {
                     client.disconnect();
 //                    client.close();
 //                    client = null;
+                    isRelease = true;
                     Logc.d(TAG, "mqtt server close");
                 } catch (MqttException e) {
                     Logc.d(TAG, e.toString());
@@ -158,6 +160,7 @@ public class MQ {
     private void init() {
         // 服务器地址（协议+地址+端口号）
         isConnectFlag = false;
+        isRelease = false;
         String uri = connBean.getBrokerUrl();
         if (!TextUtils.isEmpty(uri)) {
             if (client == null) {
@@ -169,12 +172,14 @@ public class MQ {
                     @Override
                     public void connectionLost(Throwable cause) {
                         mqttCallback.connectionLost(cause);
-                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                reConnect();
-                            }
-                        }, 5000);
+                        if (!isRelease) {
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    reConnect();
+                                }
+                            }, 5000);
+                        }
                     }
 
                     @Override
@@ -295,12 +300,14 @@ public class MQ {
                 onMqttConnectListener.onFailure(arg0, arg1);
             }
 
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    reConnect();
-                }
-            }, 5000);
+            if (!isRelease) {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        reConnect();
+                    }
+                }, 5000);
+            }
         }
     };
 
