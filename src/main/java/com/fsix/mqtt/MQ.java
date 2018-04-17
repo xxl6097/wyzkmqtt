@@ -256,11 +256,11 @@ public class MQ {
         if (client == null)
             return;
         Logc.i("####mqtt doClientConnection " + client.isConnected());
-        if (!client.isConnected() && NetworkUtil.isConnected(mContext)) {
+        if (!client.isConnected()/* && NetworkUtil.isConnected(mContext)*/) {
             try {
                 client.connect(conOpt, null, iMqttActionListener);
             } catch (MqttException e) {
-                Logc.e(TAG, "######mqtt " + e.toString());
+                Logc.e(TAG, "######mqtt doClientConnection MqttException " + e.toString());
             }
         }
 
